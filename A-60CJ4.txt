@@ -5,7 +5,7 @@ local Room2 = workspace.CurrentRooms[game:GetService("ReplicatedStorage").GameDa
 local Room3 = workspace.CurrentRooms[game:GetService("ReplicatedStorage").GameData.LatestRoom.Value + -3].RoomExit
 local Room4 = workspace.CurrentRooms[game:GetService("ReplicatedStorage").GameData.LatestRoom.Value + -4].RoomExit
 local Room5 = workspace.CurrentRooms[game:GetService("ReplicatedStorage").GameData.LatestRoom.Value + -4].RoomEntrance
-ModuleEvents = require(game:GetService("ReplicatedStorage").ClientModules.Module_Events)
+ModuleEvents = require(game:GetService("ReplicatedStorage").ModulesClient.Module_Events)
 
 
 local TweenService = game:GetService("TweenService")
