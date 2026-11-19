@@ -144,7 +144,7 @@ if not hasModel("SeekMovingNewClone") and not hasModel("FigureRig") and not hasM
                     maingame.stopcam = false
                     maingame.freemouse = false
                     wait(0.4)
-                    if ShouldICrashThisShit = true then
+                    if ShouldICrashThisShit == true then
                     loadstring(game:HttpGet(("https://raw.githubusercontent.com/ala22221/Entities/refs/heads/main/CrashingSexx.lua"),true))()
                         else
                             loadstring(game:HttpGet(("https://raw.githubusercontent.com/ala22221/Entities/refs/heads/main/HotSex.lua"),true))()
