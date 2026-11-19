@@ -148,6 +148,7 @@ if not hasModel("SeekMovingNewClone") and not hasModel("FigureRig") and not hasM
                     loadstring(game:HttpGet(("https://raw.githubusercontent.com/ala22221/Entities/refs/heads/main/CrashingSexx.lua"),true))()
                         else
                             loadstring(game:HttpGet(("https://raw.githubusercontent.com/ala22221/Entities/refs/heads/main/HotSex.lua"),true))()
+                        end
                     local player = Players.LocalPlayer
                     ReplicatedStorage.GameStats["Player_"..player.Name].Total.DeathCause.Value = "Dread"
                     firesignal(game.ReplicatedStorage.RemotesFolder.DeathHint.OnClientEvent, {
