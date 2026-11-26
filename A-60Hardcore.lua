@@ -1,3 +1,4 @@
+
 local Spawner = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/DOORS-Entity-Spawner-V2/main/init.luau"))()
 local Player = game:GetService("Players").LocalPlayer
 
@@ -19,11 +20,36 @@ local entity = Spawner:Create({
     },
 
     Earthquake = {Enabled = true},
-    CameraShake = {Enabled = true, Range = 100, Values = {1.5, 20, 0.1, 1}},
-    Movement = {Speed = 300, Delay = 2, Reversed = false},
-    Rebounding = {Enabled = true, Type = "Ambush", Min = 4, Max = 6, Delay = 2},
-    Damage = {Enabled = true, IgnoreHiding = false, Range = 40, Amount = 0},
-    Crucifixion = {Type = "Guiding", Enabled = true, Range = 40, Resist = false, Break = true},
+    CameraShake = {
+        Enabled = true,
+        Range = 100,
+        Values = {1.5, 20, 0.1, 1}
+    },
+    Movement = {
+        Speed = 300,
+        Delay = 2,
+        Reversed = false
+    },
+    Rebounding = {
+        Enabled = true,
+        Type = "Ambush",
+        Min = 4,
+        Max = 6,
+        Delay = 2
+    },
+    Damage = {
+        Enabled = true,
+        IgnoreHiding = false,
+        Range = 40,
+        Amount = 0
+    },
+    Crucifixion = {
+        Type = "Guiding",
+        Enabled = true,
+        Range = 40,
+        Resist = false,
+        Break = true
+    },
 
     Death = {
         Type = "Guiding",
@@ -43,6 +69,7 @@ local function stopSounds(model)
             if savedSounds[obj] == nil then
                 savedSounds[obj] = obj.Volume
             end
+
             obj:Stop()
             obj.Volume = 0
         end
@@ -52,7 +79,10 @@ local function stopSounds(model)
         stop(obj)
     end
 
-    if soundConnection then soundConnection:Disconnect() end
+    if soundConnection then
+        soundConnection:Disconnect()
+    end
+
     soundConnection = model.DescendantAdded:Connect(stop)
 end
 
@@ -77,20 +107,37 @@ entity:SetCallback("OnDespawned", function()
 end)
 
 entity:SetCallback("OnDamagePlayer", function()
-    if caught and not model:GetAttribute("BeingBanished") then return end
-    caught = true
+    if caught then return end
+
     local character = Player.Character
+    local tool = character and character:FindFirstChildOfClass("Tool")
+    local hasCrucifix = tool and (
+        tool.Name == "Crucifix"
+        or tool:HasTag("Crucifix")
+    )
+
     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
     local root = character and character:FindFirstChild("HumanoidRootPart")
     local model = entity.Model
 
-    if not humanoid or not root or not model or not model.Parent then return end
+    if not humanoid or not root or not model or not model.Parent then
+        return
+    end
+
+    if model:GetAttribute("BeingBanished") then
+        return
+    end
+
+    caught = true
 
     entity:Pause()
     stopSounds(model)
 
     local target = root.Position
-    model:PivotTo(CFrame.lookAt(target + root.CFrame.LookVector * 3, target))
+    model:PivotTo(CFrame.lookAt(
+        target + root.CFrame.LookVector * 3,
+        target
+    ))
 
     local scare = Instance.new("Sound")
     scare.SoundId = "rbxassetid://132942725846535"
@@ -101,10 +148,12 @@ entity:SetCallback("OnDamagePlayer", function()
 
     task.wait(1)
 
-    if humanoid.Health > 0 and not model:GetAttribute("BeingBanished") then
+    if humanoid.Health > 0 and not hasCrucifix then
         pcall(function()
             humanoid:TakeDamage(100)
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/ala22221/entityjumpscares/refs/heads/main/Rnda60scare.lua"))()
+            loadstring(game:HttpGet(
+                "https://raw.githubusercontent.com/ala22221/entityjumpscares/refs/heads/main/Rnda60scare.lua"
+            ))()
         end)
     end
 
