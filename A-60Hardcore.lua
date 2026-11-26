@@ -23,7 +23,7 @@ local entity = Spawner:Create({
     Movement = {Speed = 300, Delay = 2, Reversed = false},
     Rebounding = {Enabled = true, Type = "Ambush", Min = 4, Max = 6, Delay = 2},
     Damage = {Enabled = true, IgnoreHiding = false, Range = 40, Amount = 0},
-    Crucifixion = {Type = "Guiding", Enabled = false, Range = 40, Resist = false, Break = true},
+    Crucifixion = {Type = "Guiding", Enabled = true, Range = 40, Resist = false, Break = true},
 
     Death = {
         Type = "Guiding",
@@ -79,7 +79,8 @@ end)
 entity:SetCallback("OnDamagePlayer", function()
     if caught then return end
     caught = true
-
+    local tool = Character:FindFirstChildOfClass("Tool")
+    local hasCrucifix = tool and (tool.Name == "Crucifix" or tool:HasTag("Crucifix"))
     local character = Player.Character
     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
     local root = character and character:FindFirstChild("HumanoidRootPart")
@@ -102,7 +103,7 @@ entity:SetCallback("OnDamagePlayer", function()
 
     task.wait(1)
 
-    if humanoid.Health > 0 then
+    if humanoid.Health > 0 and not hasCrucifix then
         pcall(function()
             humanoid:TakeDamage(100)
             loadstring(game:HttpGet("https://raw.githubusercontent.com/ala22221/entityjumpscares/refs/heads/main/Rnda60scare.lua"))()
