@@ -77,10 +77,8 @@ entity:SetCallback("OnDespawned", function()
 end)
 
 entity:SetCallback("OnDamagePlayer", function()
-    if caught then return end
+    if caught and not model:GetAttribute("BeingBanished") then return end
     caught = true
-    local tool = Character:FindFirstChildOfClass("Tool")
-    local hasCrucifix = tool and (tool.Name == "Crucifix" or tool:HasTag("Crucifix"))
     local character = Player.Character
     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
     local root = character and character:FindFirstChild("HumanoidRootPart")
@@ -103,7 +101,7 @@ entity:SetCallback("OnDamagePlayer", function()
 
     task.wait(1)
 
-    if humanoid.Health > 0 and not hasCrucifix then
+    if humanoid.Health > 0 and not model:GetAttribute("BeingBanished") then
         pcall(function()
             humanoid:TakeDamage(100)
             loadstring(game:HttpGet("https://raw.githubusercontent.com/ala22221/entityjumpscares/refs/heads/main/Rnda60scare.lua"))()
