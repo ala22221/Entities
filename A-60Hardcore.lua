@@ -3,6 +3,7 @@ local Player = game:GetService("Players").LocalPlayer
 
 local caught = false
 local soundConnection
+local savedSounds = {}
 
 local entity = Spawner:Create({
     Entity = {
@@ -36,16 +37,12 @@ local entity = Spawner:Create({
     }
 })
 
-entity:SetCallback("OnDespawned", function()
-    if soundConnection then
-        soundConnection:Disconnect()
-        soundConnection = nil
-    end
-end)
-
 local function stopSounds(model)
     local function stop(obj)
         if obj:IsA("Sound") then
+            if savedSounds[obj] == nil then
+                savedSounds[obj] = obj.Volume
+            end
             obj:Stop()
             obj.Volume = 0
         end
@@ -58,6 +55,26 @@ local function stopSounds(model)
     if soundConnection then soundConnection:Disconnect() end
     soundConnection = model.DescendantAdded:Connect(stop)
 end
+
+local function resumeSounds()
+    if soundConnection then
+        soundConnection:Disconnect()
+        soundConnection = nil
+    end
+
+    for sound, volume in pairs(savedSounds) do
+        if sound.Parent then
+            sound.Volume = volume
+            sound:Play()
+        end
+    end
+
+    table.clear(savedSounds)
+end
+
+entity:SetCallback("OnDespawned", function()
+    resumeSounds()
+end)
 
 entity:SetCallback("OnDamagePlayer", function()
     if caught then return end
@@ -89,9 +106,11 @@ entity:SetCallback("OnDamagePlayer", function()
         pcall(function()
             humanoid:TakeDamage(100)
             loadstring(game:HttpGet("https://raw.githubusercontent.com/ala22221/entityjumpscares/refs/heads/main/Rnda60scare.lua"))()
-            entity:Resume()
         end)
     end
+
+    resumeSounds()
+    entity:Resume()
 end)
 
 entity:Run(true)
