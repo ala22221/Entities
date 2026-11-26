@@ -23,7 +23,7 @@ local entity = Spawner:Create({
     Movement = {Speed = 300, Delay = 2, Reversed = false},
     Rebounding = {Enabled = true, Type = "Ambush", Min = 4, Max = 6, Delay = 2},
     Damage = {Enabled = true, IgnoreHiding = false, Range = 40, Amount = 0},
-    Crucifixion = {Type = "Guiding", Enabled = true, Range = 40, Resist = false, Break = true},
+    Crucifixion = {Type = "Guiding", Enabled = false, Range = 40, Resist = false, Break = true},
 
     Death = {
         Type = "Guiding",
@@ -111,6 +111,16 @@ entity:SetCallback("OnDamagePlayer", function()
 
     resumeSounds()
     entity:Resume()
+entity:SetCallback("CrucifixionOverwrite", function()
+    local Source = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/ala22221/Backups-of-some-stuff/refs/heads/main/EntityRepentanceSourcee.lua"
+))()
+
+Source:Play({
+    Resist = false,
+    Type = "Guiding", -- "Curious" (yellow)
+    Entity = workspace:FindFirstChild("A-60")
+})
 end)
 
 entity:Run(true)
