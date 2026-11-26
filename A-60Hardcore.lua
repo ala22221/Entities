@@ -6,7 +6,6 @@ local Spawner = loadstring(game:HttpGet(
 ))()
 
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 
 local Player = Players.LocalPlayer
 
@@ -40,7 +39,7 @@ local entity = Spawner:Create({
 
     Movement = {
         Speed = 300,
-        Delay = 2,
+        Delay = 4,
         Reversed = false
     },
 
@@ -69,7 +68,12 @@ local entity = Spawner:Create({
 
     Death = {
         Type = "Guiding",
-        Hints = {"You have died to an entity designated as A-60", "It can Apear at any moment", "When it appears there will be a loud scream", "It is like Ambush"},
+        Hints = {
+            "You have died to an entity designated as A-60",
+            "It can Apear at any moment",
+            "When it appears there will be a loud scream",
+            "It is like Ambush"
+        },
         Cause = "A-60"
     }
 })
@@ -120,27 +124,28 @@ entity:SetCallback("OnDespawned", function()
     print("Entity has despawned")
 end)
 
----====== Chase function ======---
+---====== Stop and teleport A-60 ======---
 
 local function ChasePlayer()
     if caught then return end
     caught = true
 
-    print("A-60 is chasing the player!")
+    print("A-60 caught the player!")
 
     local character = Player.Character
     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
     local root = character and character:FindFirstChild("HumanoidRootPart")
 
     if not humanoid or not root then
+        warn("Victim not found")
         return
     end
 
-    -- Find spawned A-60 model
+    -- Find spawned A-60
     local model = workspace:FindFirstChild("A-60", true)
 
     if not model then
-        warn("Could not find A-60 model!")
+        warn("A-60 model not found")
         return
     end
 
@@ -149,51 +154,50 @@ local function ChasePlayer()
         or model:FindFirstChildWhichIsA("BasePart", true)
 
     if not part then
-        warn("A-60 has no BasePart!")
+        warn("A-60 has no BasePart")
         return
     end
 
-    -- Stop existing movement forces
+    -- Remove movement controllers
     for _, object in ipairs(model:GetDescendants()) do
         if object:IsA("BodyVelocity")
-        or object:IsA("LinearVelocity")
         or object:IsA("BodyPosition")
-        or object:IsA("AlignPosition") then
+        or object:IsA("BodyGyro")
+        or object:IsA("BodyAngularVelocity")
+        or object:IsA("LinearVelocity")
+        or object:IsA("AngularVelocity")
+        or object:IsA("AlignPosition")
+        or object:IsA("AlignOrientation")
+        or object:IsA("VectorForce") then
             object:Destroy()
         end
     end
 
-    -- Stop normal entity movement as much as possible
-    part.AssemblyLinearVelocity = Vector3.zero
-
-    -- Chase loop
-    while model.Parent and humanoid.Health > 0 and root.Parent do
-        local currentPosition = part.Position
-        local targetPosition = root.Position
-
-        local offset = targetPosition - currentPosition
-
-        if offset.Magnitude > 0.1 then
-            local direction = offset.Unit
-
-            -- Face the player
-            part.CFrame = CFrame.lookAt(
-                currentPosition,
-                Vector3.new(
-                    targetPosition.X,
-                    currentPosition.Y,
-                    targetPosition.Z
-                )
-            )
-
-            -- Move toward player
-            part.AssemblyLinearVelocity = direction * 300
+    -- Stop and anchor every part
+    for _, object in ipairs(model:GetDescendants()) do
+        if object:IsA("BasePart") then
+            object.AssemblyLinearVelocity = Vector3.zero
+            object.AssemblyAngularVelocity = Vector3.zero
+            object.Anchored = true
         end
-
-        RunService.Heartbeat:Wait()
     end
 
-    print("A-60 chase ended")
+    -- Teleport in front of player
+    local targetPosition = root.Position
+    local teleportPosition = targetPosition + root.CFrame.LookVector * 3
+
+    local destination = CFrame.lookAt(
+        teleportPosition,
+        targetPosition
+    )
+
+    if model:IsA("Model") then
+        model:PivotTo(destination)
+    else
+        part.CFrame = destination
+    end
+
+    print("A-60 stopped and teleported to victim!")
 end
 
 ---====== Damage callback ======---
@@ -208,24 +212,34 @@ entity:SetCallback("OnDamagePlayer", function(newHealth: number)
 
     -- Play scare sound
     local scare = Instance.new("Sound")
-    scare.Volume = 10
+    scare.Volume = 1
     scare.RollOffMinDistance = 0
     scare.RollOffMaxDistance = 100000
     scare.SoundId = "rbxassetid://132942725846535"
     scare.Parent = workspace
     scare:Play()
 
-    -- Start chasing
+    -- Stop and teleport A-60
     task.spawn(ChasePlayer)
 
-    -- Kill player after 1 second
+    -- Wait before jumpscare and damage
     task.wait(1)
 
     local character = Player.Character
     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 
     if humanoid and humanoid.Health > 0 then
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/ala22221/entityjumpscares/refs/heads/main/Rnda60scare.lua"))()
+        -- Custom A-60 jumpscare
+        local success, err = pcall(function()
+            loadstring(game:HttpGet(
+                "https://raw.githubusercontent.com/ala22221/entityjumpscares/refs/heads/main/Rnda60scare.lua"
+            ))()
+        end)
+
+        if not success then
+            warn("A-60 jumpscare error: " .. tostring(err))
+        end
+
         humanoid:TakeDamage(100)
     end
 end)
