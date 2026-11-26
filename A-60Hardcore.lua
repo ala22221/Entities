@@ -56,7 +56,7 @@ local entity = Spawner:Create({
         Enabled = true,
         IgnoreHiding = false,
         Range = 40,
-        Amount = 0.00001
+        Amount = 0
     },
 
     Crucifixion = {
@@ -69,8 +69,8 @@ local entity = Spawner:Create({
 
     Death = {
         Type = "Guiding",
-        Hints = {"Death", "Hints", "Go", "Here"},
-        Cause = ""
+        Hints = {"You have died to an entity designated as A-60", "It can Apear at any moment", "When it appears there will be a loud scream", "It is like Ambush"},
+        Cause = "A-60"
     }
 })
 
@@ -225,6 +225,7 @@ entity:SetCallback("OnDamagePlayer", function(newHealth: number)
     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 
     if humanoid and humanoid.Health > 0 then
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ala22221/entityjumpscares/refs/heads/main/Rnda60scare.lua"))()
         humanoid:TakeDamage(100)
     end
 end)
