@@ -9,7 +9,7 @@ local savedSounds = {}
 local entity = Spawner:Create({
     Entity = {
         Name = "A-60",
-        Asset = "15455640886",
+        Asset = "https://github.com/ala22221/Entities/blob/main/A-60 Hardcore Remake.rbxm?raw=true",
         HeightOffset = 0
     },
 
