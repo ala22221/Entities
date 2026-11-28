@@ -8,7 +8,6 @@ local Rooms = workspace:WaitForChild("CurrentRooms")
 local LatestRoom = RS.GameData.LatestRoom
 
 local Entity = game:GetObjects("rbxassetid://11664451634")[1]
-Entity.Name = "SeekMovingNewClone"
 Entity.Parent = workspace
 
 local Root = Entity.PrimaryPart or Entity:FindFirstChildWhichIsA("BasePart", true)
